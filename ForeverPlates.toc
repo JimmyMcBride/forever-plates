@@ -1,0 +1,16 @@
+## Interface: 16001
+## Title: Forever Plates
+## Notes: Small functional additions to Blizzard nameplates: ally aggro, interrupts, range, and removals.
+## Author: JimmyMcBride
+## Version: 0.1.0
+## Dependencies: Blizzard_NamePlates
+## SavedVariables: ForeverPlatesDB
+## SavedVariablesPerCharacter: ForeverPlatesCharacterDB
+
+Config.lua
+Capabilities.lua
+Model.lua
+Client.lua
+Plates.lua
+Options.lua
+Core.lua
