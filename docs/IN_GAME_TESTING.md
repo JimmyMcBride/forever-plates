@@ -1,6 +1,6 @@
 # In-game preview checklist
 
-Status: **not run**. Record client build, class/level, talent setup, pet/form, zone/content, actual outcome, and Lua/taint errors for each test. Do not record account identifiers or other players' personal data.
+Status: **checklist results not yet recorded**. A 0.1.0 user session logged repeated restricted-width errors in aura outlines; 0.1.1 fixes the reproduced path, with live retest pending. Start by using `/reload` and repeating enemy purge/ally dispel aura display while moving camera and entering combat; confirm error flood stops. Record client build, class/level, talent setup, pet/form, zone/content, actual outcome, and Lua/taint errors for each test. Do not record account identifiers or other players' personal data.
 
 ## Load and native behavior
 

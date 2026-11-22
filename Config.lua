@@ -1,6 +1,6 @@
 local _, addon = ...
 addon.title = "Forever Plates"
-addon.version = "0.1.0"
+addon.version = "0.1.1"
 
 local Config = {}
 addon.Config = Config

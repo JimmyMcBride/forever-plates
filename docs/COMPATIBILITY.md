@@ -55,3 +55,9 @@ Default range families are finite convenience choices. User may select another a
 ## Release gate
 
 Automated results do not certify engine restrictions, actual class spells, visual readability, or PvP legality/availability. Before a validated release, complete [in-game checks](IN_GAME_TESTING.md). Any blocked approved feature must be reported explicitly; no forbidden-frame bypass or hidden party-frame replacement is an acceptable substitute.
+
+## 0.1.1 live-error correction
+
+A user session on 2026-11-21 recorded 1,790 repeats of one `Backdrop.lua:226` error: the native backdrop size callback attempted arithmetic on a secret width while execution was tainted by ForeverPlates. This establishes a live failure in the 0.1.0 aura-outline path, not complete gameplay verification.
+
+Aura outlines now use four one-pixel solid textures positioned with native anchors. They have no BackdropTemplate, size callback, Lua dimension reads, or tiled texture-coordinate arithmetic. Regression tests reproduce the native backdrop size calculation with a restricted-dimension fixture: old outline fails, replacement survives repeated layout, combat reuse, and aura removal. User must `/reload` to discard already-created 0.1.0 backdrop frames. Post-fix live verification remains pending.

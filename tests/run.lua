@@ -71,6 +71,8 @@ local function World(class)
         self.color = {...}
     end
     function methods:SetDesaturated(value) self.desaturated = value end
+    function methods:SetColorTexture(...) self.solidColor = {...} end
+    function methods:SetHeight(value) self.height = value end
     function methods:SetBackdrop(value) self.backdrop = value end
     function methods:SetBackdropBorderColor(...) self.borderColor = {...} end
     function methods:AddMaskTexture(mask) self.mask = mask end
@@ -90,7 +92,25 @@ local function World(class)
     function methods:UnregisterAllEvents() self.events = {} end
     function methods:SetCooldownFromDurationObject(value) self.duration = value end
     function methods:Clear() self.duration = nil end
-    env.CreateFrame = function(kind, _, parent) return Frame(parent, kind) end
+    env.CreateFrame = function(kind, _, parent, template)
+        local frame = Frame(parent, kind)
+        frame.template = template
+        if template == "BackdropTemplate" then
+            -- Native Backdrop.lua recalculates tiled coordinates on size changes.
+            -- Anchored nameplate dimensions may become secret after layout.
+            frame.scripts.OnSizeChanged = function(self)
+                local anchor = self.points[1] and self.points[1][2]
+                local width = anchor and anchor.width or self.width or 16
+                self.tileWidth = width / (self.backdrop and self.backdrop.edgeSize or 1)
+            end
+        end
+        return frame
+    end
+    env.Layout = function()
+        for _, frame in ipairs(env.frames) do
+            if frame.scripts.OnSizeChanged then frame.scripts.OnSizeChanged(frame, 16) end
+        end
+    end
     env.SlashCmdList = {}
     env.Settings = {
         RegisterCanvasLayoutCategory = function() return {GetID = function() return 1 end} end,
@@ -981,6 +1001,52 @@ test("PvP restricted state produces no readiness claim", function()
     equal(state.interrupt.border.vertex[2], 0.65)
     equal(state.removal:IsShown(), false)
     equal(state.glow:IsShown(), false)
+end)
+
+test("aura outline handles restricted dimensions across native layout frames", function()
+    local e, a, plate, _, init, frame = World("SHAMAN")
+    e.book = {{id = 370}}
+    local aura = {auraInstanceID = 1, dispelName = "Magic", icon = 11}
+    local _, uf = plate("n", {enemy = true, auras = {aura}})
+    init()
+    local icon = frame(uf.AurasFrame)
+    icon.width, icon.height = e.Secret(), e.Secret()
+    uf.AurasFrame.icons[icon] = true
+    e.NamePlateAuraItemMixin.SetAura(icon, aura)
+    e.NamePlateAurasMixin.RefreshAuras(uf.AurasFrame)
+    local outline = a.Plates.units.n.auraGlows[icon]
+    assert(outline:IsShown())
+    equal(outline.template, nil)
+    equal(outline.scripts.OnSizeChanged, nil)
+    equal(#outline.edges, 4)
+    for _, edge in ipairs(outline.edges) do
+        equal(#edge.points, 2)
+        equal(edge.solidColor[2], 0.82)
+        assert(edge.height == 1 or edge.width == 1)
+    end
+    for _ = 1, 10 do e.Layout() end
+end)
+
+test("secret-sized outline reused and cleared when aura disappears", function()
+    local e, a, plate, _, init, frame = World("SHAMAN")
+    e.book = {{id = 370}}
+    local aura = {auraInstanceID = 1, dispelName = "Magic", icon = 11}
+    local _, uf = plate("n", {enemy = true, auras = {aura}})
+    init()
+    local icon = frame(uf.AurasFrame)
+    icon.width, icon.height = e.Secret(), e.Secret()
+    uf.AurasFrame.icons[icon] = true
+    e.NamePlateAuraItemMixin.SetAura(icon, aura)
+    e.NamePlateAurasMixin.RefreshAuras(uf.AurasFrame)
+    local outline = a.Plates.units.n.auraGlows[icon]
+    e.combat = true
+    e.NamePlateAurasMixin.RefreshAuras(uf.AurasFrame)
+    equal(a.Plates.units.n.auraGlows[icon], outline)
+    e.Layout()
+    e.units.n.auras = {}
+    e.NamePlateAurasMixin.RefreshAuras(uf.AurasFrame)
+    equal(outline:IsShown(), false)
+    for _, edge in ipairs(outline.edges) do equal(edge:IsVisible(), false) end
 end)
 
 print("Passed " .. total .. " checks.")

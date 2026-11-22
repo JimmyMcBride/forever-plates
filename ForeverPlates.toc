@@ -2,7 +2,7 @@
 ## Title: Forever Plates
 ## Notes: Small functional additions to Blizzard nameplates: ally aggro, interrupts, range, and removals.
 ## Author: JimmyMcBride
-## Version: 0.1.0
+## Version: 0.1.1
 ## Dependencies: Blizzard_NamePlates
 ## SavedVariables: ForeverPlatesDB
 ## SavedVariablesPerCharacter: ForeverPlatesCharacterDB
