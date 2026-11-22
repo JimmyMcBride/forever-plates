@@ -29,10 +29,26 @@ local function Icon(parent)
 end
 
 local function Outline(parent)
-    local frame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    local frame = CreateFrame("Frame", nil, parent)
     frame:EnableMouse(false)
-    frame:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1})
-    frame:SetBackdropBorderColor(1, 0.82, 0.15, 0.8)
+    -- Nameplate-relative dimensions can be secret. BackdropTemplate's size
+    -- callback divides those dimensions in Lua, so let native anchors draw
+    -- four solid edges instead; no dimension reads or tiled coordinates.
+    frame.edges = {}
+    local anchors = {
+        {"TOPLEFT", "TOPRIGHT", "height"},
+        {"BOTTOMLEFT", "BOTTOMRIGHT", "height"},
+        {"TOPLEFT", "BOTTOMLEFT", "width"},
+        {"TOPRIGHT", "BOTTOMRIGHT", "width"},
+    }
+    for _, points in ipairs(anchors) do
+        local edge = frame:CreateTexture(nil, "OVERLAY")
+        edge:SetColorTexture(1, 0.82, 0.15, 0.8)
+        edge:SetPoint(points[1], frame, points[1])
+        edge:SetPoint(points[2], frame, points[2])
+        if points[3] == "height" then edge:SetHeight(1) else edge:SetWidth(1) end
+        frame.edges[#frame.edges + 1] = edge
+    end
     frame:Hide()
     return frame
 end

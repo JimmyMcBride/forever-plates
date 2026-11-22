@@ -2,7 +2,7 @@
 
 Small functional additions to Blizzard's nameplates for **WoW Forever**. Keeps Blizzard's layout, fonts, enemy threat colors, cast bars, and aura settings.
 
-**0.1.0 preview:** automated checks pass; actual client rendering, combat/taint behavior, dungeon/raid access, and PvP behavior are **not yet live verified**. See [compatibility](docs/COMPATIBILITY.md) and [in-game checks](docs/IN_GAME_TESTING.md). This is a testing preview, not a certified all-class release.
+**0.1.1 preview:** fixes the repeated restricted-width aura-outline errors observed in 0.1.0. Automated checks pass; post-fix client rendering, combat/taint behavior, dungeon/raid access, and PvP behavior still need live verification. See [compatibility](docs/COMPATIBILITY.md) and [in-game checks](docs/IN_GAME_TESTING.md). This is a testing preview, not a certified all-class release.
 
 ## Features
 
@@ -15,7 +15,7 @@ All features are independently switchable. No automatic targeting, casting, chat
 
 ## Install
 
-1. Use the installable `ForeverPlates-0.1.0-preview.zip` from a preview download or CI artifact, or build it using the commands below.
+1. Use the installable `ForeverPlates-0.1.1-preview.zip` from a preview download or CI artifact, or build it using the commands below.
 2. Extract its `ForeverPlates` folder into your Forever client's `Interface/AddOns` directory. Expected path: `<WoW>/_forever_/Interface/AddOns/ForeverPlates/ForeverPlates.toc`.
 3. Restart game for a new addon installation; enable **Forever Plates** at character selection. Updates to an existing installation can use `/reload`.
 4. Enable desired friendly/enemy plates in Blizzard's settings. Forever Plates does not change their visibility or enable native aura/cast options.
@@ -46,7 +46,7 @@ python3 tools/check.py
 python3 tools/package.py
 ```
 
-Package output: `dist/ForeverPlates-0.1.0-preview.zip`, with a single `ForeverPlates/` directory. CI runs the same checks and uploads that ZIP as an artifact. No third-party runtime libraries; built-in `Blizzard_NamePlates` dependency ensures native mixins exist before attachment.
+Package output: `dist/ForeverPlates-0.1.1-preview.zip`, with a single `ForeverPlates/` directory. CI runs the same checks and uploads that ZIP as an artifact. No third-party runtime libraries; built-in `Blizzard_NamePlates` dependency ensures native mixins exist before attachment.
 
 Modules separate settings, class capability records, pure decisions, client API access, visual attachment, options, and event coordination. Added visuals are reused across plate recycling. One shared 0.2-second updater handles relevant range/interrupt changes; aura/threat updates use events.
 
